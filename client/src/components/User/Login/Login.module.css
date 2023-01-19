@@ -1,0 +1,201 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap");
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    padding: 0 !important;
+    margin: 0;
+    font-family: "Inter" sans-serif;
+    background-color: #151515 ;
+    
+    
+}
+
+label{
+    color: #151515 !important;
+}
+
+.countdownText{
+    display: flex;
+    color: black;
+    justify-content: center;
+    gap:10px
+}
+
+.resendButton{
+    margin-top: -5px;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    background :linear-gradient(45deg,rgb(15, 15, 15),rgb(48, 47, 47));
+}
+
+.forgotpassword{
+color: #151515;
+}
+
+.container{
+    margin: 150px;
+    min-height: 58vh ;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 100px;
+    background-color: white;
+}
+.containerOtp{
+    margin: 150px;
+    min-height: 45vh ;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 150px;
+    background-color: white;
+}
+
+
+.containerTheatre{
+    margin: 150px;
+    min-height: 45vh ;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 150px;
+    background-color: white;
+}
+
+.loginLeft{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    background-color: white;
+}
+
+
+.loginRight{
+    display: flex;
+    justify-content: center;
+    background-color: rgb(5, 5, 5);
+    
+}
+img{
+    width: 100%;
+}
+
+.input{
+    border: 1px solid black;
+    color: #151515;
+    height: 38px;
+    padding: 0 2rem;
+    width:100%;
+    outline:none;
+    transition: background .5s;
+    font-size:18px;
+    border-radius:100px;
+}
+.button{
+    border:none;
+    background :linear-gradient(45deg,rgb(84, 79, 231),rgb(48, 63, 140));
+    color: white;
+    padding:1rem;
+    border-radius: 100px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 18px;
+    height: 55px;
+    cursor: pointer;
+}
+
+.imgfooter1{
+    width: 30px;
+}
+.imgfooter2{
+    width: 44px;
+}
+
+.loginForm{
+    width: 450px;
+    
+}
+
+.formContent{
+    display: flex;
+    flex-direction: column;
+    gap:30px;
+}
+
+.loginFormFooter{
+    display: flex;
+    gap:30px;
+    margin-top: 40px;
+    
+}
+
+.twoLogins{
+    flex:6;
+    gap:15px;
+    margin-bottom: 30px;
+    border: 1px solid black;
+    border-radius: 100px;
+    padding: .6rem;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    color: black;
+    text-decoration: none;
+   
+}
+
+.twoLog{
+    
+    justify-content: center;
+    display: flex;
+    color: black;
+}
+
+.twoLogins:hover{
+    background-color: rgb(201, 201, 201);
+}
+
+.formItem label{
+    display: inline-block;
+    background-color: white;
+    margin-bottom: 10px;
+    position: absolute;
+    padding:0 10px;
+    transform:translate(30px,-10px);
+    font-size: 14px;
+}
+
+
+@media (max-width:1350px){
+    .loginLeft{
+        padding: 50px !important;
+
+    }
+    .loginForm{
+        width: 100%;
+    }
+    .loginFormFooter{
+        flex-direction: column;
+        gap:15px;
+    }
+}
+@media (max-width:768px){
+    body{
+        padding: 20px;
+    }
+    .container{
+        grid-template-columns: auto;
+
+    }
+    .loginRight{
+        display: none;
+    }
+}
+

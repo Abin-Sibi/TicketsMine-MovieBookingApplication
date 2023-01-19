@@ -1,0 +1,8 @@
+.slick-prev::before,.slick-next::before{
+    display: none;
+  }
+  .Carousel.item > img {
+    width:100%;
+    height:100px;
+    object-fit: cover;
+  }

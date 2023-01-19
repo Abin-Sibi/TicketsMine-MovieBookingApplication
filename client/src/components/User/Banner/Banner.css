@@ -1,0 +1,39 @@
+
+  
+  .featured-content {
+    height: 50vh;
+    padding: 50px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0), #151515),url('../../../../public/images/8a6a68144592045.628efcd3e77b5.jpg');
+  }
+  
+  .featured-title {
+    width: 200px;
+  }
+  
+  .featured-desc {
+    width: 500px;
+    color: lightgray;
+    margin: 30px 0;
+  }
+  
+  .featured-button {
+    background :linear-gradient(45deg,rgb(222, 3, 3),rgb(90, 49, 49));
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-weight: bold;
+  }
+
+  .book-button{
+    margin-left: 5px;
+    background :linear-gradient(45deg,rgb(228, 225, 225),rgb(66, 65, 65));
+    color: rgb(8, 8, 8);
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-weight: bold;
+  }
+  

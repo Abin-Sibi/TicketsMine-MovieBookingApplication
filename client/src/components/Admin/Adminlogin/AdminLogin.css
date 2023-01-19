@@ -1,0 +1,17 @@
+.containermain-admin{
+    height: 30rem;
+    width: 25rem;
+    display: flex;
+    margin: auto;
+    margin-top: 100px;
+    margin-bottom: -100px;
+    border-radius: 10px;
+    background: linear-gradient(white,rgb(83, 72, 72));
+   
+}
+.containerlogin{
+    margin: auto;
+}
+.inputadmin{
+    border-radius: 40px !important;
+}
