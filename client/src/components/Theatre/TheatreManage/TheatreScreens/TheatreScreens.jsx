@@ -32,7 +32,7 @@ function TheatreScreens({refresh}) {
    <>
    {screen?.map((screen,i)=>{
     return(
-        <div style={{marginTop:"50px",backgroundColor:"black",borderRadius:"10px",maxWidth:"900px",height:"150px"}}>
+        <div style={{marginTop:"50px",backgroundColor:"black",borderRadius:"10px",maxWidth:"600px",height:"150px"}}>
         <h1>Screen 1 - {screen.screenname}</h1>
         <span>{screen.rows},{screen.column}</span>
        </div>

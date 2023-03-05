@@ -19,6 +19,9 @@ const moviesSchema = new mongoose.Schema({
       releasedate: {
           type: Date,
       },
+      imageUrl: {
+        type: String,
+    },
       isApproved:{
           type:Boolean,
           default:false

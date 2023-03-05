@@ -1,4 +1,5 @@
 const UserModel = require("../Models/UserModel");
+const Movies = require("../Models/movies")
 const jwt = require('jsonwebtoken')
 const asyncHandler = require("express-async-handler")
 const { Types } = require("mongoose");
@@ -268,6 +269,16 @@ module.exports.fetchUser = asyncHandler(async (req, res) => {
       res.send(error.status).json(error.message);
     }
   });
+
+
+module.exports.getMovies = asyncHandler(async(req,res)=>{
+  try{
+   const movies = await Movies.find()
+   res.json(movies);
+  }catch(error){
+    res.send(error.status).json(error.message);
+  }
+})
 
   module.exports.userlogout = asyncHandler(async(req,res)=>{
     console.log("jjjjjjjjjjjjjjjjjj")

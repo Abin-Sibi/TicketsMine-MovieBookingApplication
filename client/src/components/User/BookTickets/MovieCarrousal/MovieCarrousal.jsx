@@ -1,12 +1,23 @@
-import React from "react";
+import axios from "../../../../axios";
+import React, { useEffect } from "react";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { Link } from "react-router-dom";
 import Card from "./MovieCard";
+import { useState } from "react";
 
-function MovieCarrousal({movies}) {
+function MovieCarrousal() {
+
+    const [movieList,setMovieList] = useState([]);
       
-     
+    useEffect(() => {
+        console.log("the consfja")
+      axios.get("/api/user/getMovies").then((response)=>{
+         console.log(response.data,"this is the response got with movies")
+         setMovieList(response.data)
+      })
+    },[setMovieList])
+    
     const responsive = {
         superLargeDesktop: {
             breakpoint: { max: 4000, min: 3000 },
@@ -30,17 +41,12 @@ function MovieCarrousal({movies}) {
             <h1 style={{ marginTop: "40px",color:"white" }}>New Releases</h1>
             <Carousel responsive={responsive} removeArrowOnDeviceType={["tablet", "mobile"]}>
 
-
+             {movieList.map((movie)=>{
+                return(<Link style={{ textDecoration: "none" }} to={"/booktickets/movie"}><Card movieName={movie.title} movieGenre={movie.genre} imageUrl={movie.imageUrl} /></Link>)
+               
+             })}
                 
-                        <Link style={{ textDecoration: "none" }} to={"/booktickets/movie"}><Card  /></Link>
-                        <Card />
-                        <Card />
-                        <Card />
-                        <Card />
-                        <Card />
-                        <Card />
-                        <Card />
-                        <Card />
+                        
                     
             </Carousel>
         </div >

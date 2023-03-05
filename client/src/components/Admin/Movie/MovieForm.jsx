@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import axios from "../../../axios";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "../Movie/MovieForm.css"
 
 function MovieForm() {
@@ -14,56 +14,52 @@ function MovieForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },reset
+    formState: { errors }, reset
   } = useForm();
+  const [imageSelected, setImageSelected] = useState("")
   const onSubmit = async (data) => {
     console.log("aaaaaaaaaaaaaaaaaaa")
     const formData = new FormData();
- 
+
+
+    formData.append("file", imageSelected);
+    formData.append("upload_preset", "kjadhf739")
+
     
-    formData.append("image", data.file[0]);
-    
-    const datas = {
-      title: data.title,
-      description: data.description,
-      genre: data.genre,
-      director: data.director,
-      duration: data.duration,
-      releasedate: data.date
-    };
     reset();
-    axios.post("/api/admin/addmovies", datas).then(async (response) => {
-      console.log(response.data);
-      console.log(response.data.moviedata,"mooovie here")
-      if (response.data.status) {
-        
-        let id = response.data.moviedata._id;
-        await axios
-          .post(
-            `/api/admin/upload-moviePoster/${id}`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          )
-          .then(({ data }) => {
-            toast.success(`Movie added Succsessfully`,{theme:"light"}, {
-              position: "top-right",
-            })
-            navigate("/addmovies");
-          });
-      } else {
-        generateError(response.error.message);
-      }
-    });
+    axios
+      .post("https://api.cloudinary.com/v1_1/dp2p38wb5/image/upload", formData, { withCredentials: false }).then(async (response) => {
+        console.log("img added to cloudinary", response.status)
+        if (response.status===200) {
+          console.log(response.data.public_id,"thils is the url",response.data,"this is the data")
+          let imageUrl = response.data.public_id
+
+          const datas = {
+            title: data.title,
+            description: data.description,
+            genre: data.genre,
+            director: data.director,
+            duration: data.duration,
+            imageUrl: imageUrl,
+            releasedate: data.date
+          };
+            await axios.post("/api/admin/addmovies", datas).then((response) => {
+              console.log(response.data);
+              console.log(response.data.moviedata, "mooovie here")
+              
+              toast.success(`Movie added Succsessfully`, { theme: "light" }, {position: "top-right",})
+              navigate("/addmovies");
+            });
+        } else {
+          generateError(response.error.message);
+        }
+      });
   };
- 
+
   return (
     <main>
-        <div className="wrapperMovie rounded">
-        <div className="h3" style={{color:"black",}}>Add Movie</div>
+      <div className="wrapperMovie rounded">
+        <div className="h3" style={{ color: "black", }}>Add Movie</div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -88,7 +84,23 @@ function MovieForm() {
                   )}
                 </span>
               </div>
-              
+              <div className="col-md-6 mt-md-0 mt-3">
+                <label>Language</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Language"
+                  {...register("Language", {
+                    required: true
+                  })}
+                />
+                <span className="text-danger">
+                  {errors.genre?.type === "required" && (
+                    <span>Language is required</span>
+                  )}
+                </span>
+              </div>
+
             </div>
             <div className="row">
               <div className="col-md-6 mt-md-0 mt-3">
@@ -181,13 +193,15 @@ function MovieForm() {
                 <input
                   type="file"
                   className="form-control"
-                  {...register("file")}
+                  onChange={(event) => {
+                    setImageSelected(event.target.files[0])
+                  }}
                 />
                 <span className="text-danger"></span>
               </div>
             </div>
-           
-           
+
+
             <div className="d-flex justify-content-center pt-4">
               <button className="btn btn-success" style={{ width: "80px" }}>
                 Submit
@@ -196,8 +210,8 @@ function MovieForm() {
           </div>
         </form>
       </div>
-      <ToastContainer/>
-     </main>
+      <ToastContainer />
+    </main>
   );
 }
 

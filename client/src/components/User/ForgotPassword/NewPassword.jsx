@@ -13,7 +13,7 @@ function NewPassword(props) {
     
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();     
 
         try {
             if(newpass===confirmpass){
