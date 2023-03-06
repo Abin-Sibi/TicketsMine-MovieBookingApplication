@@ -33,7 +33,7 @@ function App() {
         <Route exact path="/otp" element={<OtpLogin />}></Route>
         <Route exact path="/" element={<Home />}></Route>
         <Route exact path="/booktickets" element={<BookTicketHome />}></Route>
-        <Route exact path="/booktickets/movie" element={<BookTicketsMovie/>} />
+        <Route exact path="/booktickets/movie/:id" element={<BookTicketsMovie/>} />
         <Route exact path="/booktickets/buytickets" element={<SelectTheatreTime/>} />
         <Route exact path="/theatre" element={<TheatreLogin />} />
         <Route exact path="/theatre/signup" element={<TheatreSignup />} />

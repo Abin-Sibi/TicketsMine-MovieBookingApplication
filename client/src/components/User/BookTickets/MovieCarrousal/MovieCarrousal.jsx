@@ -42,7 +42,7 @@ function MovieCarrousal() {
             <Carousel responsive={responsive} removeArrowOnDeviceType={["tablet", "mobile"]}>
 
              {movieList.map((movie)=>{
-                return(<Link style={{ textDecoration: "none" }} to={"/booktickets/movie"}><Card movieName={movie.title} movieGenre={movie.genre} imageUrl={movie.imageUrl} /></Link>)
+                return(<Link style={{ textDecoration: "none" }} to={`/booktickets/movie/${movie._id}`}><Card movieName={movie.title} movieGenre={movie.genre} imageUrl={movie.imageUrl} /></Link>)
                
              })}
                 

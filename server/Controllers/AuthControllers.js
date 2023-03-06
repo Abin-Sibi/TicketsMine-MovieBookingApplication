@@ -280,6 +280,18 @@ module.exports.getMovies = asyncHandler(async(req,res)=>{
   }
 })
 
+module.exports.getmovieById = asyncHandler(async(req,res)=>{
+  try{
+    
+    let id = req.params.id
+   const movie = await Movies.findById(id)
+   console.log(movie)
+   res.json(movie);
+  }catch(error){
+    res.send(error.status).json(error.message);
+  }
+})
+
   module.exports.userlogout = asyncHandler(async(req,res)=>{
     console.log("jjjjjjjjjjjjjjjjjj")
     try{

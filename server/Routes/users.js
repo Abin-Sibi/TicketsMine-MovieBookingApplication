@@ -1,5 +1,5 @@
 
-const {register, login ,mobile,otp,otpverify,otpforgotpassword,newpassword,userlogout, getMovies} = require("../Controllers/AuthControllers")
+const {register, login ,mobile,otp,otpverify,otpforgotpassword,newpassword,userlogout, getMovies,getmovieById} = require("../Controllers/AuthControllers")
 const {checkUser} = require("../Middlewares/AuthMiddlewares")
 var router = require("express").Router();
 
@@ -12,6 +12,7 @@ router.post("/otpverify",otpverify)
 router.post("/otpforgotpassword",otpforgotpassword)
 router.post("/newpassword",newpassword)
 router.get("/getMovies",getMovies)
+router.get("/getmovieById/:id",getmovieById)
 router.get("/logout",userlogout)
 
 module.exports = router;

@@ -1,6 +1,7 @@
-import React from "react";
-// import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+
 // import { Link } from "react-router-dom";
 import "./movie.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,6 +11,7 @@ import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
+import {movieDetails} from '../Redux/Reducers/MovieReducer'
 // import { Carousel } from "react-bootstrap";
 
 // function valuetext(value) {
@@ -17,8 +19,43 @@ import Slider from "@mui/material/Slider";
 // }
 
 function MoviePage() {
-  const navigate = useNavigate();
 
+  // const [movie,setMovie] = useState()
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(movieDetails(movieId))
+   },[])
+  const navigate = useNavigate();
+  let movieId = useParams()
+
+  // async function FetchData() {
+    // const myData = await useSelector(state => state.myReducer.myData);
+    const moviedetails = useSelector((state)=>state.movie.data)
+
+    // const myData = useSelector(state => state.myReducer.myData);
+
+// if (moviedetails instanceof Promise) {
+//   moviedetails.then(data => {
+//     // Do something with the data once the Promise resolves
+//     setMovie(data);
+//   });
+// } else {
+//   // The data is not a Promise, so it's available immediately
+  console.log(moviedetails,"ggggggggggggg");
+// }
+    
+    // console.log(moviedetails,"this is the movie from the redux")
+    // Do something with the data once the Promise resolves
+
+  // }
+  
+  // FetchData();
+  
+ 
+  
+  
+ 
+  console.log(movieId,"this is the id")
   return (
     <div>
       {/* {movieInfo && ( */}
@@ -26,7 +63,7 @@ function MoviePage() {
           <div
             className="container-moviepage"
             style={{
-              backgroundImage: `linear-gradient(90deg, rgb(34, 34, 34) 24.97%, rgb(34, 34, 34) 38.3%, rgba(34, 34, 34, 0.04) 97.47%, rgb(34, 34, 34) 100%),url(${`../images/8a6a68144592045.628efcd3e77b5.jpg`})`,
+              backgroundImage: `linear-gradient(90deg, rgb(34, 34, 34) 24.97%, rgb(34, 34, 34) 38.3%, rgba(34, 34, 34, 0.04) 97.47%, rgb(34, 34, 34) 100%),url(${`https://res.cloudinary.com/dp2p38wb5/image/upload/v1678028171/${moviedetails.imageUrl}.jpg`})`,
               backgroundPosition: "center",
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
@@ -34,10 +71,10 @@ function MoviePage() {
           >
             
             <div className="container__movieDetail">
-              <h1>Stranger Things</h1>
+              <h1>{moviedetails.title}</h1>
               <div className="container__movieDetail_rating">
                 <img
-                  src="../images/8a6a68144592045.628efcd3e77b5.jpg"
+                  src={`https://res.cloudinary.com/dp2p38wb5/image/upload/v1678028171/${moviedetails.imageUrl}.jpg`}
                   alt="Rating"
                   style={{ width: 300 }}
                 />
