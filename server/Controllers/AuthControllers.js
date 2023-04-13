@@ -1,11 +1,15 @@
 const UserModel = require("../Models/UserModel");
 const Movies = require("../Models/movies")
+require ("dotenv").config()
 const jwt = require('jsonwebtoken')
 const asyncHandler = require("express-async-handler")
 const { Types } = require("mongoose");
 const multer = require('multer')
-const bcrypt = require('bcrypt')
-require ("dotenv").config()
+const bcrypt = require('bcrypt');
+const Reservation = require("../Models/ReservationModel");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const generateQR = require("../utils/generateQr");
 
 
 
@@ -17,8 +21,8 @@ require ("dotenv").config()
  const client = require("twilio")(accountSID, authToken);
 
 const maxAge = 3*24*60*60
-const createToken = (id)=>{
-    return jwt.sign({id},process.env.userToken,{
+const createToken = (id,name)=>{
+    return jwt.sign({id,name},process.env.userToken,{
         expiresIn:maxAge,
     })
 };
@@ -119,7 +123,7 @@ module.exports.otpverify = async (req,res,next)=>{
       if (resp.valid) {
         let isBlocked = false;
         const user = await UserModel.create({name,email,phone,password,isBlocked});
-        const token = createToken(user._id);
+        const token = createToken(user._id,user.name);
 
         res.cookie("userToken",token,{
          withCredectials:true,
@@ -142,7 +146,7 @@ module.exports.login = async (req,res,next)=>{
     try{
         const {email,password} = req.body;
         const user = await UserModel.login(email,password);
-        const token = createToken(user._id);
+        const token = createToken(user._id,user.name);
 
         res.cookie("userToken",token,{
          withCredectials:true,
@@ -198,7 +202,7 @@ module.exports.otp = async (req,res,next)=>{
     .then((resp) => {
       console.log("otp res", resp);
       if (resp.valid) {
-        const token = createToken(user._id);
+        const token = createToken(user._id,user.name);
          console.log('token',token,'userid',user._id)
         res.cookie("userToken",token,{
          withCredectials:true,
@@ -275,7 +279,7 @@ module.exports.getMovies = asyncHandler(async(req,res)=>{
   try{
    const movies = await Movies.find()
    res.json(movies);
-  }catch(error){
+  }catch(error){ 
     res.send(error.status).json(error.message);
   }
 })
@@ -292,7 +296,140 @@ module.exports.getmovieById = asyncHandler(async(req,res)=>{
   }
 })
 
-  module.exports.userlogout = asyncHandler(async(req,res)=>{
+module.exports.getSeatsInformation = asyncHandler(async (req, res) => {
+  try {
+    console.log('qwehlkreikjdndksjsl][[]]]{[')
+    const { date, movieId,showtime, theatreid  } = req.body;
+    console.log("in get seat infromation", date, movieId, theatreid, showtime);
+    const data = await Reservation.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              showDate: date,
+            },
+            {
+              movieId: Types.ObjectId(movieId),
+            },
+            {
+              cinemaId: Types.ObjectId(theatreid),
+            },
+            {
+              startAt: showtime,
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          seats: {
+            $push: "$seats",
+          },
+        },
+      },
+    ]);
+
+    let seat = [];
+    if (data.length === 0) {
+      res.json({ seat: false });
+    } else {
+      if (data[0].seats.length != 0) {
+        for (let i = 0; i < data[0].seats.length; i++) {
+          for (let j = 0; j < data[0].seats[i].length; j++) {
+            seat.push(data[0].seats[i][j]);
+          }
+        }
+      }
+    }
+    console.log(data,'ksksksksksksk');
+    res.json(seat);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+module.exports.reservation = asyncHandler(async (req, res) => {
+ 
+  try {
+    const { paymentId, total } = req.body;
+    console.log(paymentId, total,'payemnt totoal,',req.body)
+
+    const payment = await stripe.paymentIntents.create({
+      amount: total,
+      currency: "INR",
+      description: "TicketsMine",
+      payment_method: paymentId,
+      confirm: true,
+    });
+    console.log(payment,'payment huheowwee')
+    const data = await Reservation(req.body).save();
+    const qrcode = await generateQR(
+      "http//:localhost:3000/reservation/" + data._id
+    );
+    // console.log('payment successfull',qrcode)
+    await Reservation.findByIdAndUpdate(data._id,{$set:{qrcode:qrcode}})
+    res.json({ status: "payment successfull", data, qrcode });
+  } catch (error) {
+
+    console.log("paymenterror",error);
+  }
+});
+
+module.exports.reviews = asyncHandler(async(req,res)=>{
+  try{
+    const {message,rating,movieId,userId} = req.body
+    const user = await UserModel.findById(userId.id)
+    const posting = await Movies.findOneAndUpdate(
+      { _id: movieId },
+      {
+        $push: {
+          Review: {
+            userName: user.name,
+            rating: rating,
+            message: message,
+            date:new Date()
+          },
+        },
+      }
+    )
+    console.log(posting)
+  }catch(error){
+   console.log(error,'this is the error from catch reviews')
+  }
+})
+
+module.exports.getReview = asyncHandler(async (req, res) => {
+  try {
+    let id = req.params.id;
+
+    const data = await Movies.findOne({ _id: id })
+    
+    // console.log(data?.Review?.reverse())
+    res.status(200).json(data?.Review?.reverse());
+  } catch (error) {}
+});
+
+module.exports.getUserHistory = asyncHandler(async(req,res)=>{
+  try {
+    let id = req.params.id  
+    console.log(id,'666666')  
+    Reservation.find({userId:id})
+    .populate('movieId cinemaId').sort({bookedDate:-1})
+    .exec((err, reservations) => {
+      if (err) {
+        console.log(err,'000');
+      } else {
+        
+        res.status(200).json(reservations)
+      }
+    });
+  } catch (error) {
+    console.log(error,'444444444')
+  }
+})
+
+module.exports.userlogout = asyncHandler(async(req,res)=>{
     console.log("jjjjjjjjjjjjjjjjjj")
     try{
       res.clearCookie("userToken",{path:"/"})
@@ -300,5 +437,5 @@ module.exports.getmovieById = asyncHandler(async(req,res)=>{
     }catch{
       res.json({status:false})
     }
-  })
+})
   

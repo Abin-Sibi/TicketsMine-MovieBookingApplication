@@ -1,9 +1,11 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import { useCookies } from 'react-cookie'
+import { BsGoogle } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from '../../../axios'
+import jwtDecode from 'jwt-decode'
 
 
 import logstyle from'../Login/Login.module.css'
@@ -15,7 +17,22 @@ function Login() {
         password: ""
     });
     const [cookies,removeCookie] = useCookies([]);
+
+    function handleCallbackResponse(response){
+     console.log(response.credential,"google credentialsssssss")
+     let userObject = jwtDecode(response.credential)
+     console.log(userObject,"Kkkkk")
+    }
     useEffect(()=>{
+        /*global google*/
+        google.accounts.id.initialize({
+            client_id:"171742127444-1elipvvqfkj399mqacfpm11u13gpikbs.apps.googleusercontent.com",
+            callback:handleCallbackResponse
+        })
+        google.accounts.id.renderButton(
+            document.getElementById("signInDiv"),
+            {theme:"outline",size:"large"}
+        )
         const verifyUser = async ()=>{
             if(cookies.userToken){
              navigate("/")
@@ -87,7 +104,7 @@ function Login() {
                                   <a href="#" className={logstyle.twoLogins} >
                                     <img className={logstyle.imgfooter1}  src="../images/Facebook_f_logo_(2021).svg.webp" alt="" />Facebook Login
                                   </a>
-                                  <a href="#" className={logstyle.twoLogins} >
+                                  <a href="#" className={logstyle.twoLogins} id='signInDiv' >
                                     <img className={logstyle.imgfooter1} src="../images/google2.png" alt="" />Google Login
                                   </a>
                         </div>

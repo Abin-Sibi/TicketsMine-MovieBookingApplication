@@ -14,13 +14,7 @@ function BookTicketsMovie() {
         <MoviePage movieId={movieId}/>
         
               
-        <Reviews/>
-        <Reviews/>
-        <Reviews/>
-        <Reviews/>
-        <Reviews/>
-        <Reviews/>
-        <Reviews/>
+        
         
         </div>
   )

@@ -8,6 +8,7 @@ const User = require('../Models/UserModel')
 const { generateAdminToken } = require("../utils/generateToken");
 const multer = require("multer");
 const theatreModel = require("../Models/theatreModel");
+const Reservation = require("../Models/ReservationModel");
 
 const adminLogin = asyncHandler(async (req, res) => {
   try {
@@ -102,6 +103,47 @@ const getApprovedCompanies = asyncHandler(async(req,res)=>{
 })
 
 
+const banTheatre = asyncHandler(async(req,res)=>{
+  try {
+    const id = req.params.id;
+    console.log(id,'lll')
+    const result = await Application.findOneAndUpdate(
+    {_id:id},
+    {
+      isBlocked:true
+    }
+    ) 
+    res.json({ status: true });
+  } catch (error) {
+    res.status(error.status).json(error.message);
+  }
+})
+
+const unbanTheatre = asyncHandler(async(req,res)=>{
+  try {
+    const id = req.params.id;
+    console.log(id,'lll')
+    const result = await Application.findOneAndUpdate(
+    {_id:id},
+    {
+      isBlocked:false
+    }
+    ) 
+    res.json({ status: true });
+  } catch (error) {
+    res.status(error.status).json(error.message);
+  }
+})
+
+const getAllUsers = asyncHandler(async(req,res)=>{
+  try {
+    const userData = await User.find()
+    console.log(userData,"company getalltheatres")
+    res.json(userData)
+  } catch (error) {
+    res.status(error.status).json(error.message)
+  }
+})
 
 const blockUser = asyncHandler(async(req,res)=>{
   try {
@@ -121,6 +163,54 @@ const unblockUser = asyncHandler(async(req,res)=>{
     res.status(error.status).json(error.message)
   }
 })
+
+const TheaterList = asyncHandler(async(req,res)=>{
+  try{
+    const theater = await Application.find({})
+    res.json(theater)
+  }catch(err){
+    console.log(err)
+  }
+});
+
+const reservationDetails = asyncHandler(async (req, res) => {
+  try {
+    const movies = await Reservation.find({});
+    return res.status(200).json(movies);
+  } catch (error) {}
+});
+const topReserved = asyncHandler(async (req, res) => {
+
+  Reservation.aggregate([
+    { $group: { _id: '$movieId', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 5 },
+    {
+      $lookup: {
+        from: 'movies',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'movieDetails'
+      }
+    }
+  ]).exec((err, topMovies) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  // console.log(topMovies)
+    const moviesArray = topMovies.map((movie) => ({
+      title: movie.movieDetails[0]?.title,
+      director: movie.movieDetails[0]?.director,
+      year: movie.movieDetails[0]?.year,
+      Image: movie.movieDetails[0]?.ImageUrl,
+      count: movie.count,
+    }));
+    return res.json(moviesArray);
+ 
+  })
+
+});
 
 const adminlogout = asyncHandler(async(req,res)=>{
   console.log("jjjjjjjjjjjjjjjjjj")
@@ -168,6 +258,6 @@ const moviePoster = asyncHandler(async(req,res)=>{
   }
 })
 
-module.exports = { adminLogin, getCompanies, applicationApprove,applicationReject ,getAllTheatres,getApprovedCompanies ,blockUser,unblockUser,addmovies,moviePoster,adminlogout};
+module.exports = { adminLogin, getCompanies, applicationApprove,applicationReject ,getAllTheatres,getApprovedCompanies ,blockUser,unblockUser,banTheatre,unbanTheatre,addmovies,moviePoster,TheaterList,topReserved,reservationDetails,getAllUsers,adminlogout};
 
 

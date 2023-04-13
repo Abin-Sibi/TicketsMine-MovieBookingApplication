@@ -16,6 +16,7 @@ function TheatreManage() {
   const [cookies] = useCookies([]);
   const navigate = useNavigate();
 const [refresh, setRefresh] = useState()
+const [screen,setScreen] = useState()
   const {
     register,
     handleSubmit,
@@ -23,13 +24,42 @@ const [refresh, setRefresh] = useState()
   } = useForm();
 
 
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = cookies.theatreToken;
+      const decoded = await jwt_decode(token);
+      console.log(decoded.id, "ksssssssssssssss");
+      await axios
+        .get(`/api/theatre/getscreens/${decoded.id}`)
+        .then((response) => {
+          console.log(response.data.screen, "screens are herep0000000000000");
+          setScreen(response.data.screen);
+        });
+    };
+
+    fetchData();
+  }, [cookies.theatreToken]);
 console.log(refresh,"yyy")
   const onSubmit = async (data) => {
     const formData = new FormData();
-    const token = cookies.theatreToken;
+    // const token = cookies.theatreToken;
+    // const decoded = await jwt_decode(token);
+    //     console.log(decoded.id, "ksssssssssssssss")
+    //     await axios.get(`/api/theatre/getscreens/${decoded.id}`).then((response) => {
+    //         console.log(response.data.screen, "screens are herep0000000000000")
+    //         setScreen(response.data.screen)
+            
+    //     })
+        console.log(screen,"jjqqqqqqqqquuuu------")
+        console.log(screen.map((x) => x.screenname.toLowerCase()),"ooooooooooo")
+        if(screen.map(x => x.screenname.toLowerCase()).includes(data.screenname.toLowerCase())){
+          toast.error(`This name already exists`,{theme:"light"}, {
+            position: "top-right",
+          })
+        }else{
+              const token = cookies.theatreToken;
     const decoded = await jwt_decode(token);
-    let userId= decoded.id
+          let userId= decoded.id
     const datas = {
       screenname: data.screenname,
       rows: data.rows,
@@ -39,7 +69,7 @@ console.log(refresh,"yyy")
     setRefresh(data.screenname)
     reset();
     console.log(datas,'theee dataas')
-
+    
     axios.post("/api/theatre/addscreens", {datas,userId}).then(async (response) => {
       console.log(response.data);
       console.log(response.data,"scren added")
@@ -54,6 +84,8 @@ console.log(refresh,"yyy")
         generateError(response.error.message);
       }
     });
+    }
+    
 
   };
  

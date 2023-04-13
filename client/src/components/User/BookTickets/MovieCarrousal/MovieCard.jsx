@@ -6,7 +6,7 @@ function MovieCard({movieName,movieGenre,imageUrl}) {
     return (
         <>
         
-        <div  className={styles.card} style={{marginLeft:"30px",background:"black",color:'white'}}> 
+        <div  className={styles.card} style={{margin:"3px",background:"black",color:'white'}}> 
             <img src={`https://res.cloudinary.com/dp2p38wb5/image/upload/v1678028171/${imageUrl}.jpg`} />
             <div className={styles.title}>{movieName}</div>
             <div className={styles.genre}>{movieGenre}</div>

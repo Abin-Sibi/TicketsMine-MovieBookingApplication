@@ -54,7 +54,8 @@ function Register() {
     const handleSubmit = async (e) => {
         e?.preventDefault();
         try {
-            const { data } = await axios.post("/api/user/register", {
+            if(values.phone.length === 10){
+                 const { data } = await axios.post("/api/user/register", {
                 ...values,
             }, { withCredentials: true });
             if (data) {
@@ -70,6 +71,12 @@ function Register() {
                     setSeconds(30);
                 }
             }
+            }else{
+                toast.error(`Enter a valid phone number`,{theme:"light"}, {
+                    position: "bottom-right",
+                  })
+            }
+           
         } catch (err) {
             console.log("this is catch error", err)
         }
@@ -117,7 +124,7 @@ function Register() {
                             </div>
                             <div className={logstyle.formItem}>
                                 <label htmlFor="number">Phone</label>
-                                <input className={logstyle.input} type="number" name='phone' onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
+                                <input className={logstyle.input} type="number" name='phone' pattern="[0-9]{10}" minLength="10" maxLength="10" onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
                             </div>
                             <div className={logstyle.formItem}>
                                 <label htmlFor="password">Password</label>

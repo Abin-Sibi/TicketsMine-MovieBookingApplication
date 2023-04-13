@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-
+import ReviewModel from '../components/User/BookTickets/Reviews/AddReviews'
 // import { Link } from "react-router-dom";
 import "./movie.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,15 +12,11 @@ import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 import {movieDetails} from '../Redux/Reducers/MovieReducer'
-// import { Carousel } from "react-bootstrap";
-
-// function valuetext(value) {
-//   return `${value}`;
-// }
-
+import Reviews from "../components/User/BookTickets/Reviews/Reviews";
 function MoviePage() {
 
-  // const [movie,setMovie] = useState()
+  const [submit, setsubmit] = useState(false);
+  const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(movieDetails(movieId))
@@ -28,34 +24,10 @@ function MoviePage() {
   const navigate = useNavigate();
   let movieId = useParams()
 
-  // async function FetchData() {
-    // const myData = await useSelector(state => state.myReducer.myData);
+  const handleOpen = () => {
+      setOpen(true);
+  };
     const moviedetails = useSelector((state)=>state.movie.data)
-
-    // const myData = useSelector(state => state.myReducer.myData);
-
-// if (moviedetails instanceof Promise) {
-//   moviedetails.then(data => {
-//     // Do something with the data once the Promise resolves
-//     setMovie(data);
-//   });
-// } else {
-//   // The data is not a Promise, so it's available immediately
-  console.log(moviedetails,"ggggggggggggg");
-// }
-    
-    // console.log(moviedetails,"this is the movie from the redux")
-    // Do something with the data once the Promise resolves
-
-  // }
-  
-  // FetchData();
-  
- 
-  
-  
- 
-  console.log(movieId,"this is the id")
   return (
     <div>
       {/* {movieInfo && ( */}
@@ -89,9 +61,12 @@ function MoviePage() {
                   <p>Your ratings matter</p>
                 </div>
                 <div>
-                  <button style={{ cursor: "pointer" }} >
+                  <button style={{ cursor: "pointer" }} 
+              onClick={handleOpen}>
                     Rate Now
+                    
                   </button>
+                  <ReviewModel open={open} setOpen={setOpen} setsubmit={setsubmit} />
                 </div>
               </div>
               <div className="container__movieDetail_language">
@@ -107,10 +82,10 @@ function MoviePage() {
               </div>
               <div style={{ color: "white", fontSize: 18 }}>
                 <h5 style={{ color: "white", fontSize: 18 }}>
-                  {`2 hr - Fantasy - 30-10-2023`}
+                 {moviedetails.duration} - {moviedetails.genre} - 30-10-2023
                 </h5>
               </div>
-              <div className="BookButton" onClick={()=>navigate(`/booktickets/buytickets`)}>
+              <div className="BookButton" onClick={()=>navigate(`/booktickets/buytickets/${moviedetails._id}`)}>
                 <button>Book Tickets</button>
               </div>
             </div>
@@ -132,8 +107,8 @@ function MoviePage() {
             </div>
             <hr />
             <div>
-              <h1>Reviews</h1>
-              
+              <h1>Reviews{submit}</h1>
+              <Reviews movieId={movieId} submit={submit} setsubmit={setsubmit}/>
             </div>
             <hr />
           </div>

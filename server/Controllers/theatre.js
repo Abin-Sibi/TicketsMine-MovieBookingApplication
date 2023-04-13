@@ -2,12 +2,12 @@ const TheatreModel = require("../Models/theatreModel");
 const jwt = require('jsonwebtoken')
 const asyncHandler = require("express-async-handler")
 const { Types } = require("mongoose");
-const multer = require('multer')
+const multer = require('multer');
 require ("dotenv").config()
 
 const maxAge = 3*24*60*60
-const createTheatreToken = (id)=>{
-    return jwt.sign({id},process.env.theatreToken,{
+const createTheatreToken = (id,isApproved)=>{
+    return jwt.sign({id,isApproved},process.env.theatreToken,{
         expiresIn:maxAge,
     })
 };
@@ -45,8 +45,11 @@ const handleErrors = (err)=>{
 
 module.exports.register = async (req,res,next)=>{
     try{
+     
+
       const {name,email,phone,password} = req.body;
       const useremail = await TheatreModel.findOne({email:email})
+      
       if(!useremail){
         const user = await TheatreModel.findOne({phone:phone})
         if(!user){
@@ -91,7 +94,7 @@ module.exports.otpverifytheatre = async (req,res,next)=>{
       if (resp.valid) {
         let isBlocked = false;
         const user = await TheatreModel.create({name,email,phone,password,isBlocked});
-        const token = createTheatreToken(user._id);
+        const token = createTheatreToken(user._id,user.isApproved);
 
         res.cookie("theatreToken",token,{
          withCredectials:true,
@@ -113,7 +116,7 @@ module.exports.login = async (req,res,next)=>{
     try{
         const {email,password} = req.body;
         const user = await TheatreModel.login(email,password);
-        const token = createTheatreToken(user._id);
+        const token = createTheatreToken(user._id,user.isApproved);
 
         res.cookie("theatreToken",token,{
          withCredectials:true,
@@ -215,6 +218,286 @@ module.exports.application = asyncHandler(async (req, res) => {
         res.send(error.status).json(error.message);
       }
     });
+
+    module.exports.addmovie = asyncHandler(async (req, res) => {
+      const {values,theatreId,screenName}= req.body
+      
+        try {
+          
+          const data = await TheatreModel.findOne({
+            Screens: { $elemMatch: { screenname: screenName } },
+          }).select("Screens");
+
+          const gotScreen = data.Screens.filter((val) => val.screenname === screenName);
+          console.log(values,theatreId,screenName,gotScreen[0].screenname,"hihihihihiih")
+          const updatingSeats = await TheatreModel.updateOne(
+            {
+              _id: theatreId.id,
+              Screens: { $elemMatch: { screenname: gotScreen[0].screenname } },
+            },
+            { $push: { "Screens.$.showInfo": values } }
+          );
+          console.log("hhheeeeeeeeeee")
+          // let screeninfo = await TheatreModel.updateOne({_id:theatreId},{$addToSet:{Movie:values}})
+          console.log(gotScreen,'pppppppppp')
+          //  console.log(screeninfo); 
+          // res.json({id:screeninfo._id,status:true});
+          res.json({ status: "true" });
+        } catch (error) {
+          res.send(error.status).json(error.message);
+        }
+      });
+
+      // module.exports.getScreenShows = asyncHandler(async (req, res) => {
+      //   const movieId= req.params.id
+      //   const movieTitle = req.params.title
+      //   const releasedate = req.params.releasedate
+        
+      //     try {
+      //       console.log(movieId,movieTitle,releasedate,'the screhhhhhenifo')
+      //       const data = await TheatreModel.find(
+      //         { "Screens.showInfo.moviename": movieTitle },
+      //         { "Screens.showInfo.$": 1, "Screens.screenname": 1,"application.name": 1 }
+      //       );
+      //       res.json({data})
+      //     } catch (error) {
+      //       res.send(error.status).json(error.message);
+      //     }
+      //   });
+
+      // module.exports.getScreenShows = asyncHandler(async (req, res) => {
+      //   const movieTitle = req.params.title;
+      //   const releaseDate = req.params.releasedate;
+      
+      //   try {
+      //     const data = await TheatreModel.aggregate([
+      //       // Match documents where at least one screen shows the given movie
+      //       {
+      //         $match: {
+      //           "Screens.showInfo.moviename": movieTitle
+      //         }
+      //       },
+      //       // Unwind the Screens array so that each screen has its own document
+      //       { $unwind: "$Screens" },
+      //       // Match documents where the screen shows the given movie
+      //       {
+      //         $match: {
+      //           "Screens.showInfo.moviename": movieTitle
+      //         }
+      //       },
+      //       // Project only the screenname and the matching showInfo
+      //       {
+      //         $project: {
+      //           "application.name":1,
+      //           "Screens.screenname": 1,
+      //           showInfo: {
+      //             $filter: {
+      //               input: "$Screens.showInfo",
+      //               as: "show",
+      //               cond: {
+      //                 $and: [
+      //                   { $eq: ["$$show.moviename", movieTitle] }
+      //                 ]
+      //               }
+      //             }
+      //           }
+      //         }
+      //       }
+      //     ]);
+      //     console.log(data,"ggggggggggggg")
+      //     res.json({ data });
+      //   } catch (error) {
+      //     res.status(500).json({ error: "Internal server error" });
+      //   }
+      // });
+
+      // module.exports.getScreenShows = asyncHandler(async (req, res) => {
+      //   const movieId = req.params.id;
+      //   const movieTitle = req.params.title;
+      //   const releaseDate = req.params.releasedate;
+      
+      //   try {
+      //     const data = await TheatreModel.aggregate([
+      //       // Match documents where at least one screen shows the given movie
+      //       {
+      //         $match: {
+      //           "Screens.showInfo.moviename": movieTitle
+      //         }
+      //       },
+      //       // Unwind the Screens array so that each screen has its own document
+      //       { $unwind: "$Screens" },
+      //       // Match documents where the screen shows the given movie
+      //       {
+      //         $match: {
+      //           "Screens.showInfo.moviename": movieTitle
+      //         }
+      //       },
+      //       // Project only the application name, screenname, and matching showInfo
+      //       {
+      //         $project: {
+      //           "application.name": 1,
+      //           "Screens.screenname": 1,
+      //           showInfo: {
+      //             $filter: {
+      //               input: "$Screens.showInfo",
+      //               as: "show",
+      //               cond: {
+      //                 $and: [
+      //                   { $eq: ["$$show.moviename", movieTitle] }
+      //                 ]
+      //               }
+      //             }
+      //           }
+      //         }
+      //       },
+      //       // Group the documents by application name and combine the screen names
+      //       {
+      //         $group: {
+      //           _id: "$application.name",
+      //           Screens: {
+      //             $push: {
+      //               screenname: "$Screens.screenname",
+      //               showInfo: {
+      //                 $arrayElemAt: [
+      //                   {
+      //                     $filter: {
+      //                       input: "$showInfo",
+      //                       as: "show",
+      //                       cond: {
+      //                         $eq: ["$$show.moviename", "$Screens.screenname"]
+      //                       }
+      //                     }
+      //                   },
+      //                   0
+      //                 ]
+      //               }
+      //             }
+      //           }
+      //         }
+      //       }
+      //     ]);
+      
+      //     res.json({ data });
+      //   } catch (error) {
+      //     res.status(500).json({ error: "Internal server error" });
+      //   }
+      // });
+
+      module.exports.getScreenShows = asyncHandler(async (req, res) => {
+        const movieId = req.params.id;
+        const movieTitle = req.params.title;
+        const releaseDate = req.params.releasedate;
+      
+        try {
+          const data = await TheatreModel.aggregate([
+            {
+              $match: {
+                "Screens.showInfo.moviename": movieTitle
+              }
+            },
+            { $unwind: "$Screens" },
+            {
+              $match: {
+                "Screens.showInfo.moviename": movieTitle
+              }
+            },
+            {
+              $project: {
+                _id:1,
+                "application.name": 1,
+                "Screens.screenname": 1,
+                showInfo: {
+                  $filter: {
+                    input: "$Screens.showInfo",
+                    as: "show",
+                    cond: {
+                      $and: [
+                        { $eq: ["$$show.moviename", movieTitle] }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  theatreId:"$_id",
+                  applicationName: "$application.name",
+                  screenName: "$Screens.screenname"
+                },
+                showInfo: { $push: "$showInfo" }
+              }
+            },
+            {
+              $group: {
+                // theatreId:"$_id.theatreId",
+                _id: "$_id.applicationName",
+                screens: {
+                  $push: {
+                    theatreId:"$_id.theatreId",
+                    screenname: "$_id.screenName",
+                    showInfo: "$showInfo"
+                  }
+                }
+              }
+            }
+          ]);
+         console.log(data,'dddddddddddd')
+          res.json({ data });
+        } catch (error) {
+          res.status(500).json({ error: "Internal server error" });
+        }
+      });
+      
+
+ module.exports.editmovie = asyncHandler(async(req,res)=>{
+        const { edit,editValues, theatreId, screenName, showTime } = req.body;
+        console.log(req.body)
+        try{
+           const data = await TheatreModel.updateOne(
+          { _id: Types.ObjectId(theatreId.id), "Screens.screenname": screenName,"Screens.showInfo":{
+            $elemMatch: {
+                moviename: editValues.moviename,
+                showtime: editValues.showtime
+            }
+        }
+},
+          { $set: { "Screens.$[s].showInfo.$[elem].ticketprice":edit.ticketprice,
+                    "Screens.$[s].showInfo.$[elem].showtime": edit.showtime,
+                    "Screens.$[s].showInfo.$[elem].moviename":edit.moviename} },
+          { "arrayFilters": [ { "s.screenname": screenName },
+          { "elem.showtime": editValues.showtime },
+           ] }
+        )
+        res.json({data})
+        }catch(error){
+          console.log(error,"hihqqwwq")
+          res.status(500).json({ error: "Internal server error" });
+        }
+       
+        // return res.json({ status: true, message: 'Show added successfully' });
+      });
+
+      
+      module.exports.removemovie = asyncHandler(async(req,res)=>{
+        const { theatreId,delDetails} = req.body;
+        console.log(req.body)
+        try{
+          const data = await TheatreModel.updateOne(
+            { _id: Types.ObjectId(theatreId.id), "Screens.screenname": delDetails.screenname },
+            { $pull: { "Screens.$.showInfo": { showtime: delDetails.showtime } } }
+        )
+        res.json({data})
+        }catch(error){
+          console.log(error,"hihqqwwq")
+          res.status(500).json({ error: "Internal server error" });
+        }
+       
+        // return res.json({ status: true, message: 'Show added successfully' });
+      });
+      
+      
 
 
 module.exports.theatrelogout = asyncHandler(async(req,res)=>{

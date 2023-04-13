@@ -37,7 +37,22 @@ function Applicaiton() {
         heelo();
       });
   };
+
+  const banTheatre = (element) => {
+    axios
+      .get(`/api/admin/banTheatre/${element}`)
+      .then((response) => {
+        heelo();
+      });
+  };
  
+  const unbanTheatre = (element) => {
+    axios
+      .get(`/api/admin/unbanTheatre/${element}`)
+      .then((response) => {
+        heelo();
+      });
+  };
 
   const openModel = (application) => {
     console.log(application);
@@ -63,6 +78,7 @@ function Applicaiton() {
                     <th>Theatre name</th>
                     <th>View</th>
                     <th>Options</th>
+                    <th>Ban Theatre</th>
                   </tr>
                 </thead>
                 <tbody className="text-center">
@@ -200,6 +216,7 @@ function Applicaiton() {
                       
                     }
                   </td>
+                  <td >{datas.isBlocked == true?<button onClick={()=>{unbanTheatre(datas._id)}} style={{borderRadius:'8px' ,backgroundColor:'green',color:'white','height':'30px',width:"50px"}}>Unban</button>:<button style={{borderRadius:'10px' ,backgroundColor:'red',color:'white','height':'30px',width:"50px"}} onClick={()=>{banTheatre(datas._id)}}>Ban</button>}</td>
                         
                       </tr>
                     );

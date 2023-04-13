@@ -51,14 +51,21 @@
     font-weight: bold;
   }
   .profile-container {
-    flex:2;
+    /* flex:2; */
     display: flex;
     align-items: center;
+    background-color: rgb(251, 247, 247);
     justify-content: flex-end;
+    border-radius: 20px;
+    margin: 0 20px;
+    padding:5px;
+    gap: 5px;
+    color:black;
+    border-color: aliceblue;
   }
   
   .profile-text-container {
-    margin: 0 20px;
+    /* margin: 0 20px; */
   }
   
   .profile-picture {

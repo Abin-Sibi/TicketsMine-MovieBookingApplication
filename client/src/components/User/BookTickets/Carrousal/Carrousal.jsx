@@ -40,7 +40,7 @@ function Carrousal() {
          {
              dataList?.map((banner, index) => (
                  <div style={{ padding: "0px 15px" }} key={index + 1}>
-                     <img style={{ width: "102%", cursor: "pointer" }} src={banner} alt="Advertisement banner" />
+                     <img style={{ width: "102%",height:"360px", cursor: "pointer" }} src={banner} alt="Advertisement banner" />
                  </div>
              ))
          }

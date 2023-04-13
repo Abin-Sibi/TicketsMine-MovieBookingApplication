@@ -1,6 +1,29 @@
 const mongoose = require("mongoose")
 const bcrypt = require('bcrypt')
 
+const screenSchema = new mongoose.Schema({
+    screenname: {
+      type: String,
+      required: [true, 'Screen name is required'],
+    },
+    showInfo: [
+      {
+        moviename: {
+          type: String,
+          required: [true, 'Movie name is required'],
+        },
+        showtime: {
+          type: String,
+          required: [true, 'Show time is required'],
+        },
+        ticketprice: {
+          type: Number,
+          required: [true, 'Ticket price is required'],
+        },
+      },
+    ],
+  });
+
 const theatreSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -33,9 +56,7 @@ const theatreSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    Screens:{
-        type:Array
-    }
+    Screens:[screenSchema]
 },
 {
   timestamps: true,

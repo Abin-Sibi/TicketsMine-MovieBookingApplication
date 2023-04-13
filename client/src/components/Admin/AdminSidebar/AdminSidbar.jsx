@@ -46,7 +46,7 @@ const AdminSidebar = ({children}) => {
             icon:<FaTh/>
         },
         {
-            path:"/about",
+            path:"/users",
             name:"Profile",
             icon:<FaUserAlt/>
         },

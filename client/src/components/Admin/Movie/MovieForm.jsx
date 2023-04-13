@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "../Movie/MovieForm.css"
+import MovieList from "./MovieList";
 
 function MovieForm() {
   const generateError = (error) =>
@@ -193,6 +194,7 @@ function MovieForm() {
                 <input
                   type="file"
                   className="form-control"
+                  accept=".jpg,.jpeg,.png"
                   onChange={(event) => {
                     setImageSelected(event.target.files[0])
                   }}
@@ -210,6 +212,7 @@ function MovieForm() {
           </div>
         </form>
       </div>
+      <MovieList/>
       <ToastContainer />
     </main>
   );

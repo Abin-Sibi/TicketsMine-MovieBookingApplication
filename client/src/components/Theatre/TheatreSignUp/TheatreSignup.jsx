@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from '../../../axios'
 import logstyle from "../../User/Login/Login.module.css"
+// import firebase from "../../../Firebase"
+
 
 function TheatreSignup() {
     const navigate = useNavigate()
@@ -16,6 +18,7 @@ function TheatreSignup() {
     });
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(30);
+   
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -55,6 +58,11 @@ function TheatreSignup() {
             const { data } = await axios.post("/api/theatre/register", {
                 ...values,
             },{ withCredentials: true });
+            // let phone = values.phone
+            // let recaptcha = new firebase.auth.RecaptchaVerifier('recaptcha')
+            // firebase.auth().signInWithPhoneNumber(`+91${phone}`,recaptcha).then(function(e){
+            //   console.log("phone",phone,e)
+            // })
             if (data) {
                 if (data.errors) {
                     console.log('heeeeeeeeeeeeeeeeeeeeeeeeeeeeee')

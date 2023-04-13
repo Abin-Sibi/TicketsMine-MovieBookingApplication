@@ -29,7 +29,10 @@ const moviesSchema = new mongoose.Schema({
       isBooked:{
           type:Boolean,
           default:false
-      }
+      },
+      Review:{
+        type:Array,
+      },
     },
       {
         timestamps:true
